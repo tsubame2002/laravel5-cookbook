@@ -3,11 +3,28 @@ apps = search("aws_opsworks_app")
 apps.each do |app|
   app_path = "/var/www/html/#{app['shortname']}"
 
+  cookbook_file "/root/.ssh/id_rsa" do
+    source "id_rsa"
+    mode   "600"
+  end
+  file "/root/.ssh/id_rsa" do
+    action :create_if_missing
+    mode "600"
+    content app['app_source']['ssh_key']
+  end
 
+  file "/root/.ssh/privateRepository.sh" do
+    mode "700"
+    content <<-EOL
+    #!/bin/bash
+    ssh -i /root/.ssh/id_rsa -o "StrictHostKeyChecking=no" "$@"
+    EOL
+  end
 
   git app_path do
     repository app['app_source']['url']
-    revision app["app_source"]["revision"]
+    revision app["app_source"]["revision" ]
+    ssh_wrapper "/root/.ssh/privateRepository.sh"
     action :sync
   end
 
