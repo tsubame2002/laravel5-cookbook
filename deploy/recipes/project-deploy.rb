@@ -3,10 +3,6 @@ apps = search("aws_opsworks_app")
 apps.each do |app|
   app_path = "/var/www/html/#{app['shortname']}"
 
-  cookbook_file "/root/.ssh/id_rsa" do
-    source "id_rsa"
-    mode   "600"
-  end
   file "/root/.ssh/id_rsa" do
     action :create_if_missing
     mode "600"
