@@ -1,4 +1,3 @@
-include_recipe 'deploy'
 
 apps = search("aws_opsworks_app")
 apps.each do |app|
