@@ -1,4 +1,5 @@
-node[:deploy].each do |app_name, deploy|
+app = search("aws_opsworks_app")
+app.each do
 
 
   # Add write-access permission to "shared/log" directory.
