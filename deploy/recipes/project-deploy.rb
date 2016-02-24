@@ -7,6 +7,7 @@ apps.each do |app|
 
   git app_path do
     repository app['app_source']['url']
+    revision app["app_source"]["revision"]
     action :sync
   end
 
