@@ -61,6 +61,10 @@ apps.each do |app|
   end
 
   execute "Add write-access permission to storage directory" do
+    command "chmod -R 775 #{app_path}/logs"
+  end
+
+  execute "Add write-access permission to storage directory" do
     command "chmod -R 775 #{app_path}/storage"
   end
 
