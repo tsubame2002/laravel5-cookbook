@@ -61,10 +61,7 @@ apps.each do |app|
   end
 
   execute "" do
-    command "chown -R #{node["user"]}:#{node["group"]} #{app_path}/logs"
-  end
-  execute "" do
-    command "chown -R #{node["user"]}:#{node["group"]} #{app_path}/storage"
+    command "chown -R #{node["user"]}:#{node["group"]} #{app_path}"
   end
 
   execute "Add write-access permission to storage directory" do
