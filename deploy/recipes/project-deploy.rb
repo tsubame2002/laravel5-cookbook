@@ -1,6 +1,7 @@
 
 apps = search("aws_opsworks_app")
-database = search("aws_opsworks_rds_db_instance")
+database = search("aws_opsworks_rds_db_instance").first
+dbname = apps['data_sources'].first['database_name']
 
 apps.each do |app|
   app_path = "/var/www/html/#{app['shortname']}"
@@ -42,7 +43,7 @@ apps.each do |app|
         dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
       end
       dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{database['address']}\n")
-      dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{app['data_sources']['database_name']}\n")
+      dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{dbname}\n")
       dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_USERNAME=#{database['db_user']}\n")
       dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_PASSWORD=#{database['db_password']}\n")
       dotenv.send(:editor).lines.join
