@@ -60,8 +60,11 @@ apps.each do |app|
     action :create
   end
 
-  execute "Add write-access permission to storage directory" do
-    command "chmod -R 775 #{app_path}/logs"
+  execute "" do
+    command "chown -R #{node["user"]}:#{node["group"]} #{app_path}/logs"
+  end
+  execute "" do
+    command "chown -R #{node["user"]}:#{node["group"]} #{app_path}/storage"
   end
 
   execute "Add write-access permission to storage directory" do
