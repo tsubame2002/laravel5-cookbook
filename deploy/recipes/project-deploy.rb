@@ -4,7 +4,6 @@ apps.each do |app|
   app_path = "/var/www/html/#{app['shortname']}"
 
   file "/root/.ssh/id_rsa" do
-    action :create_if_missing
     mode "600"
     content app['app_source']['ssh_key']
   end
@@ -22,6 +21,22 @@ apps.each do |app|
     revision app["app_source"]["revision" ]
     ssh_wrapper "/root/.ssh/privateRepository.sh"
     action :sync
+  end
+
+  # execute 'composer install'
+  execute "composer" do
+    command <<-EOH
+      composer install -d #{app_path} --optimize-autoloader
+    EOH
+  end
+
+  file "#{app_path}/.env" do
+    group node["normal"]["group"]
+    owner node["normal"]["user"]
+    content lazy {
+      dotenv = Chef::Util::FileEdit.new("#{app_path}/.env.example")
+      dotenv.send(:contents).join
+    }
   end
 
 end
