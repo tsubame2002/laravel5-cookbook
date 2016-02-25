@@ -50,6 +50,16 @@ apps.each do |app|
     }
   end
 
+  directory "#{app_path}/storage/logs" do
+    action :delete
+    recursive true
+  end
+  directory "#{app_path}/storage/logs" do
+    group node["group"]
+    owner node["user"]
+    action :create
+  end
+
   execute "Add write-access permission to storage directory" do
     command "chmod -R 775 #{app_path}/storage"
   end
@@ -59,9 +69,7 @@ apps.each do |app|
   end
 
   
-  directory "#{app_path}/storage/logs" do
-    action :delete
-    recursive true
-  end
+
+
 
 end
