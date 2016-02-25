@@ -1,0 +1,10 @@
+<VirtualHost *:<%= @port %>>
+  ServerName <%= @vhostname %>
+  DocumentRoot <%= @docroot %>
+  <Directory <%= @docroot %> >
+    AllowOverride all
+    Options -MultiViews
+  </Directory>
+  ErrorLog /var/log/httpd/<%= @app_name %>.error.log
+  CustomLog /var/log/httpd/<%= @app_name %>.access.log combined
+</VirtualHost>

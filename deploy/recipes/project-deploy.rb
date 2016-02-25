@@ -60,7 +60,7 @@ apps.each do |app|
     action :create
   end
 
-  execute "" do
+  execute "change owner" do
     command "chown -R #{node["user"]}:#{node["group"]} #{app_path}"
   end
 
