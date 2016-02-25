@@ -1,5 +1,7 @@
 
 apps = search("aws_opsworks_app")
+database = search("aws_opsworks_rds_db_instance")
+
 apps.each do |app|
   app_path = "/var/www/html/#{app['shortname']}"
 
@@ -36,8 +38,38 @@ apps.each do |app|
     owner node["user"]
     content lazy {
       dotenv = Chef::Util::FileEdit.new("#{app_path}/.env.example")
-      dotenv.send(:contents).join
+      node["dotenv"].each do |key, value|
+        dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
+      end
+      dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{database['address']}\n")
+      dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{app['data_sources']['database_name']}\n")
+      dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_USERNAME=#{database['db_user']}\n")
+      dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_PASSWORD=#{database['db_password']}\n")
+      dotenv.send(:editor).lines.join
     }
+  end
+
+  execute "Add write-access permission to storage directory" do
+    command "chmod -R 775 #{app_path}/shared/log"
+  end
+  execute "Add write-access permission to storage directory" do
+    command "chmod -R 775 #{app_path}/storage"
+  end
+
+  execute "Add write-access permission to bootstrap/cache directory" do
+    command "chmod -R 775 #{app_path}/bootstrap/cache"
+  end
+
+  
+  directory "#{app_path}/storage/logs" do
+    action :delete
+    recursive true
+  end
+
+  link "#{app_path}/storage/logs" do
+    group node["group"]
+    owner node["user"]
+    to "#{app_path}/shared/log"
   end
 
 end
