@@ -20,6 +20,8 @@ apps.each do |app|
   end
 
   git app_path do
+    user node["user"]
+    group node["group"]
     repository app['app_source']['url']
     revision app["app_source"]["revision" ]
     ssh_wrapper "/root/.ssh/privateRepository.sh"
