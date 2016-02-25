@@ -30,9 +30,10 @@ apps.each do |app|
     EOH
   end
 
+
   file "#{app_path}/.env" do
-    group node["normal"]["group"]
-    owner node["normal"]["user"]
+    group node["group"]
+    owner node["user"]
     content lazy {
       dotenv = Chef::Util::FileEdit.new("#{app_path}/.env.example")
       dotenv.send(:contents).join
