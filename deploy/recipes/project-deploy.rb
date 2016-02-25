@@ -1,9 +1,9 @@
 
 apps = search("aws_opsworks_app")
 database = search("aws_opsworks_rds_db_instance").first
-dbname = apps['data_sources'].first['database_name']
 
 apps.each do |app|
+  dbname = app['data_sources'].first['database_name']
   app_path = "/var/www/html/#{app['shortname']}"
 
   file "/root/.ssh/id_rsa" do
