@@ -1,4 +1,4 @@
-source 'https://supermrket.chef.io'
+source "https://api.berkshelf.com"
 
 # apache
 cookbook 'apache2', '~> 3.1.0'
