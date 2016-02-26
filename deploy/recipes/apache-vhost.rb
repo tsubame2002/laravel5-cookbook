@@ -7,7 +7,7 @@ apps.each do |app|
   app_path = "/var/www/html/#{app['shortname']}"
   docroot = "#{app_path}/#{app['attributes']['document_root']}"
 
-  template "/etc/httpd/conf.d/#{app['shortname']}.conf" do
+  template "/etc/httpd/#{node['vhost_dir']}/#{app['shortname']}.conf" do
     mode 0604
     source 'web_app.conf.erb'
     variables ({
