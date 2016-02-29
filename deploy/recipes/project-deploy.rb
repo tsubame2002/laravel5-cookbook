@@ -3,7 +3,9 @@ apps = search("aws_opsworks_app")
 database = search("aws_opsworks_rds_db_instance").first
 
 apps.each do |app|
-  dbname = app['data_sources'].first['database_name']
+  if database
+    dbname = app['data_sources'].first['database_name']
+  end
   app_path = "/var/www/html/#{app['shortname']}"
 
   file "/root/.ssh/id_rsa" do
@@ -42,10 +44,13 @@ apps.each do |app|
       node["dotenv"].each do |key, value|
         dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
       end
-      dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{database['address']}\n")
-      dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{dbname}\n")
-      dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_USERNAME=#{database['db_user']}\n")
-      dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_PASSWORD=#{database['db_password']}\n")
+
+      if database
+        dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{database['address']}\n")
+        dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{dbname}\n")
+        dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_USERNAME=#{database['db_user']}\n")
+        dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_PASSWORD=#{database['db_password']}\n")
+      end
       dotenv.send(:editor).lines.join
     }
   end
