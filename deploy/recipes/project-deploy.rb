@@ -50,13 +50,13 @@ apps.each do |app|
         dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{app['environment']['DB_HOST']}\n")
       end
       if app["environment"]["DB_DATABASE"]
-        dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_HOST=#{app['environment']['DB_DATABASE']}\n")
+        dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{app['environment']['DB_DATABASE']}\n")
       end
       if app["environment"]["DB_USERNAME"]
-        dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_HOST=#{app['environment']['DB_USERNAME']}\n")
+        dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_USERNAME=#{app['environment']['DB_USERNAME']}\n")
       end
       if app["environment"]["DB_PASSWORD"]
-        dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_HOST=#{app['environment']['DB_PASSWORD']}\n")
+        dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_PASSWORD=#{app['environment']['DB_PASSWORD']}\n")
       end
 
       if database
