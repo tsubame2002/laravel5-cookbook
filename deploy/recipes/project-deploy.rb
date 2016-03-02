@@ -1,6 +1,7 @@
 
 apps = search("aws_opsworks_app")
 database = search("aws_opsworks_rds_db_instance").first
+Chef
 
 apps.each do |app|
   if database
@@ -45,17 +46,17 @@ apps.each do |app|
         dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
       end
 
-      if apps["environment"]["DB_HOST"]
-        dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{apps['environment']['DB_HOST']}\n")
+      if app["environment"]["DB_HOST"]
+        dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{app['environment']['DB_HOST']}\n")
       end
-      if apps["environment"]["DB_DATABASE"]
-        dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_HOST=#{apps['environment']['DB_DATABASE']}\n")
+      if app["environment"]["DB_DATABASE"]
+        dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_HOST=#{app['environment']['DB_DATABASE']}\n")
       end
-      if apps["environment"]["DB_USERNAME"]
-        dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_HOST=#{apps['environment']['DB_USERNAME']}\n")
+      if app["environment"]["DB_USERNAME"]
+        dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_HOST=#{app['environment']['DB_USERNAME']}\n")
       end
-      if apps["environment"]["DB_PASSWORD"]
-        dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_HOST=#{apps['environment']['DB_PASSWORD']}\n")
+      if app["environment"]["DB_PASSWORD"]
+        dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_HOST=#{app['environment']['DB_PASSWORD']}\n")
       end
 
       if database
