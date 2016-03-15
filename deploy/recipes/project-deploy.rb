@@ -41,7 +41,7 @@ apps.each do |app|
     owner node["user"]
     content lazy {
       dotenv = Chef::Util::FileEdit.new("#{app_path}/.env.example")
-      if array_key_exists('dotenv', node)
+      if node.has_key?("dotenv")
         node["dotenv"].each do |key, value|
           dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
         end
