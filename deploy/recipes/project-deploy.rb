@@ -1,7 +1,6 @@
 
 apps = search("aws_opsworks_app")
 database = search("aws_opsworks_rds_db_instance").first
-Chef
 
 apps.each do |app|
   if database
