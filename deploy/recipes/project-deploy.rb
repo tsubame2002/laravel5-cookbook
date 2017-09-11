@@ -27,63 +27,66 @@ apps.each do |app|
     ssh_wrapper "/root/.ssh/privateRepository.sh"
     action :sync
   end
+  if app["environment"] && app["environment"]["WIKI"]
 
-  # execute 'composer install'
-  execute "composer" do
-    command <<-EOH
-      composer install -d #{app_path} --optimize-autoloader
-    EOH
-  end
+  else
+    # execute 'composer install'
+    execute "composer" do
+      command <<-EOH
+        composer install -d #{app_path} --optimize-autoloader
+      EOH
+    end
 
 
-  file "#{app_path}/.env" do
-    group node["group"]
-    owner node["user"]
-    content lazy {
-      dotenv = Chef::Util::FileEdit.new("#{app_path}/.env.example")
-      if node.has_key?("dotenv")
-        node["dotenv"].each do |key, value|
-          dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
+    file "#{app_path}/.env" do
+      group node["group"]
+      owner node["user"]
+      content lazy {
+        dotenv = Chef::Util::FileEdit.new("#{app_path}/.env.example")
+        if node.has_key?("dotenv")
+          node["dotenv"].each do |key, value|
+            dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
+          end
         end
-      end
-      
-      if database
-        dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{database['address']}\n")
-        dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{dbname}\n")
-        dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_USERNAME=#{database['db_user']}\n")
-        dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_PASSWORD=#{database['db_password']}\n")
-      end
-
-      if app["environment"]
-        app["environment"].each do |key, value|
-          dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
+        
+        if database
+          dotenv.search_file_replace_line(/^DB_HOST=.*$/, "DB_HOST=#{database['address']}\n")
+          dotenv.search_file_replace_line(/^DB_DATABASE=.*$/, "DB_DATABASE=#{dbname}\n")
+          dotenv.search_file_replace_line(/^DB_USERNAME=.*$/, "DB_USERNAME=#{database['db_user']}\n")
+          dotenv.search_file_replace_line(/^DB_PASSWORD=.*$/, "DB_PASSWORD=#{database['db_password']}\n")
         end
-      end
 
-      dotenv.send(:editor).lines.join
-    }
-  end
+        if app["environment"]
+          app["environment"].each do |key, value|
+            dotenv.search_file_replace_line(/^#{key}=.*$/, "#{key}=#{value}\n")
+          end
+        end
 
-  directory "#{app_path}/storage/logs" do
-    action :delete
-    recursive true
-  end
-  directory "#{app_path}/storage/logs" do
-    group node["group"]
-    owner node["user"]
-    action :create
-  end
+        dotenv.send(:editor).lines.join
+      }
+    end
 
-  execute "change owner" do
-    command "chown -R #{node["user"]}:#{node["group"]} #{app_path}"
-  end
+    directory "#{app_path}/storage/logs" do
+      action :delete
+      recursive true
+    end
+    directory "#{app_path}/storage/logs" do
+      group node["group"]
+      owner node["user"]
+      action :create
+    end
 
-  execute "Add write-access permission to storage directory" do
-    command "chmod -R 775 #{app_path}/storage"
-  end
+    execute "change owner" do
+      command "chown -R #{node["user"]}:#{node["group"]} #{app_path}"
+    end
 
-  execute "Add write-access permission to bootstrap/cache directory" do
-    command "chmod -R 775 #{app_path}/bootstrap/cache"
+    execute "Add write-access permission to storage directory" do
+      command "chmod -R 775 #{app_path}/storage"
+    end
+
+    execute "Add write-access permission to bootstrap/cache directory" do
+      command "chmod -R 775 #{app_path}/bootstrap/cache"
+    end
   end
 
   
