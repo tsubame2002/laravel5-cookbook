@@ -28,9 +28,9 @@ apps.each do |app|
     action :sync
   end
   if app["environment"] && app["environment"]["WIKI"]
-     execute "composer" do
+     execute "sh" do
       command <<-EOH
-        sh setup.sh
+        sh #{app_path}/setup.sh
       EOH
     end
   else
